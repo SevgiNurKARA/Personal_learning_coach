@@ -1,0 +1,57 @@
+{
+  "type": "learning_plan",
+  "day": 1,
+  "user_id": "demo_user",
+  "domain": "python",
+  "level": "başlangıç",
+  "total_duration_min": 60,
+  "tasks": [
+    {
+      "task_id": 1,
+      "task": "Python syntax overview",
+      "description": "Python'un temel sözdizimi kurallarını öğren: değişkenler, veri tipleri, operatörler",
+      "duration_min": 30,
+      "type": "theory",
+      "priority": "high",
+      "completed": false
+    },
+    {
+      "task_id": 2,
+      "task": "Mini-quiz",
+      "description": "Öğrenilen konuları pekiştirmek için kısa sınav",
+      "duration_min": 15,
+      "type": "assessment",
+      "priority": "medium",
+      "completed": false
+    },
+    {
+      "task_id": 3,
+      "task": "Exercise: list comprehensions",
+      "description": "Liste oluşturma ve manipülasyonu üzerine pratik egzersizler",
+      "duration_min": 15,
+      "type": "practice",
+      "priority": "high",
+      "completed": false
+    }
+  ],
+  "resources": [
+    {
+      "title": "Intro to Python - Example Course",
+      "url": "https://example.org/python",
+      "type": "tutorial",
+      "estimated_time_min": 20
+    },
+    {
+      "title": "Python Official Documentation",
+      "url": "https://docs.python.org/3/tutorial/",
+      "type": "documentation",
+      "estimated_time_min": 15
+    }
+  ],
+  "learning_objectives": [
+    "Python değişken tanımlama ve veri tiplerini anlama",
+    "Temel operatörleri kullanabilme",
+    "Liste comprehension yapısını kavrama"
+  ],
+  "notes": "İlk gün için temel konulara odaklanılmalı. Zorlanılan konular not alınmalı."
+}
