@@ -1,0 +1,23 @@
+# AI-Powered Personal Learning Coach - Dependencies
+
+# Google AI SDK for Gemini
+google-generativeai>=0.8.0
+
+# Google Search API
+google-api-python-client>=2.100.0
+
+# Environment variables management
+python-dotenv>=1.0.0
+
+# HTTP requests
+requests>=2.31.0
+
+# Data validation
+pydantic>=2.5.0
+
+# Date/time utilities
+python-dateutil>=2.8.2
+
+# Web UI
+streamlit>=1.29.0
+
