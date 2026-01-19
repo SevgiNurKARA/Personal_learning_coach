@@ -38,7 +38,7 @@ GEMINI_MODEL=gemini-1.5-flash
 
 **Örnek:**
 ```
-GEMINI_API_KEY=AIzaSyBxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+GEMINI_API_KEY= #api key buraya
 GEMINI_MODEL=gemini-1.5-flash
 ```
 
