@@ -8,6 +8,8 @@ Bu script, projenin gerçek API'lerle nasıl çalıştığını gösterir.
 
 import json
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 from dotenv import load_dotenv
 
 # .env dosyasını yükle

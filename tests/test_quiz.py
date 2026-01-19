@@ -1,4 +1,7 @@
 """Quiz sistemi test scripti"""
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 print("=" * 60)
 print("TEST 1: CurriculumAgent - Müfredat Quiz'leri")
