@@ -86,7 +86,7 @@ class AIService:
         self, 
         topic: str, 
         level: str = "beginner",
-        num_questions: int = 5,
+        num_questions: int = 10,
         goal: str = ""
     ) -> List[Dict]:
         if not self.model:
@@ -98,42 +98,46 @@ class AIService:
             "advanced": "ileri seviye - derinlemesine ve teknik bilgi"
         }
         
-        goal_context = f"\nKullanıcının genel hedefi: {goal}" if goal else ""
+        goal_context = ""
+        if goal:
+            goal_context = f"""
+            KULLANICI HEDEFİ: "{goal}"
+            
+            ⚠️ KRİTİK TALİMAT (DİL ÖĞRENİMİ İÇİN):
+            Eğer kullanıcının hedefi bir dil öğrenmekse (örneğin İngilizce, İspanyolca, Rusça vb.):
+            1. Sorular KESİNLİKLE genel kültür sorusu OLMAMALIDIR.
+            2. Sorular "{topic}" bağlamında o dilin SÖZCÜK BİLGİSİNİ (Vocabulary), DİLBİLGİSİNİ (Grammar) veya KULLANIMINI test etmelidir.
+            3. "Siyaset" konusu için "Demokrasi nedir?" diye sorma (YANLIŞ).
+            4. "Siyaset" konusu için "Rusça'da 'Hükümet' kelimesinin çoğul hali nedir?" veya "Bu cümlede boşluğa hangi siyasi terim gelmeli?" diye sor (DOĞRU).
+            5. Seçeneklerde hedef dildeki kelimeler veya kullanımlar olmalıdır.
+            """
         
         prompt = f"""
 Günlük ders konusu: "{topic}"
-Seviye: {level_desc.get(level, level)}{goal_context}
+Seviye: {level_desc.get(level, level)}
+{goal_context}
 
-Bu günün dersi için TAMAMEN "{topic}" konusuna odaklanmış {num_questions} adet çoktan seçmeli quiz sorusu oluştur.
+Bu günün dersi için {num_questions} adet çoktan seçmeli quiz sorusu oluştur.
 
-ÖNEMLI KURALLAR:
-1. Her soru SADECE "{topic}" konusuyla ilgili olmalı
-2. Sorular kullanıcının bu günkü derste öğrendiği bilgileri test etmeli
-3. Sorular {level} seviyesine uygun olmalı
-4. Her sorunun 4 seçeneği olmalı
-5. Seçenekler makul ve yanıltıcı olmalı
-6. Doğru cevap mutlaka seçeneklerden biri olmalı (birebir eşleşmeli)
-7. Sorular Türkçe olmalı
+KURALLAR:
+1. Sorular "{topic}" konusuyla ilgili olmalı.
+2. {level} seviyesine uygun olmalı.
+3. 4 seçenekli olmalı.
+4. Doğru cevap seçeneklerle birebir eşleşmeli.
+5. Sorular Türkçe sorulabilir ama cevaplar/içerik öğrenilen dile odaklanmalı (Eğer dil öğreniliyorsa).
 
 JSON formatında döndür:
 [
     {{
         "question_id": "q1",
         "question": "Soru metni?",
-        "options": ["A seçeneği", "B seçeneği", "C seçeneği", "D seçeneği"],
-        "correct_answer": "Doğru seçenek (tam olarak options'dan biri)",
-        "topic": "{topic}"
-    }},
-    {{
-        "question_id": "q2",
-        "question": "Soru metni?",
-        "options": ["A seçeneği", "B seçeneği", "C seçeneği", "D seçeneği"],
-        "correct_answer": "Doğru seçenek",
+        "options": ["A", "B", "C", "D"],
+        "correct_answer": "A",
         "topic": "{topic}"
     }}
 ]
 
-SADECE JSON döndür, başka açıklama ekleme.
+SADECE JSON döndür.
 """
         
         try:
@@ -179,7 +183,127 @@ SADECE JSON döndür, başka açıklama ekleme.
         except Exception as e:
             print(f"⚠️ Quiz oluşturma hatası: {e}")
             return self._mock_quiz(topic, num_questions)
+
+    def generate_assessment_questions(
+        self, 
+        topic: str, 
+        num_questions: int = 10
+    ) -> List[Dict]:
+        """Seviye belirleme soruları üretir."""
+        if not self.model:
+            return self._mock_quiz(topic, num_questions)
+            
+        prompt = f"""
+        "{topic}" konusu için kullanıcının bilgi seviyesini belirlemek üzere {num_questions} adet test sorusu oluştur.
+
+        KURALLAR:
+        1. Soruların zorluk seviyeleri dengeli dağılmalı: 3 KOLAY, 4 ORTA, 3 ZOR.
+        2. Her soru için zorluk seviyesini ("easy", "medium", "hard") belirt.
+        3. Sorular Türkçe olsun.
+        4. 4 şıklı çoktan seçmeli olsun.
+        5. CEVAP ANAHTARI: "correct_answer" alanı MUTLAKA "options" listesindeki metinlerden biriyle BİREBİR AYNI olmalı.
+
+        JSON formatında döndür:
+        [
+            {{
+                "id": "1",
+                "question": "Soru metni",
+                "options": ["Seçenek A", "Seçenek B", "Seçenek C", "Seçenek D"],
+                "correct_answer": "Seçenek A",
+                "difficulty": "easy",
+                "topic_area": "Alt konu"
+            }}
+        ]
+        
+        SADECE JSON output ver. Markdown bloğu kullanma.
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            text = response.text.strip()
+            
+            # JSON temizleme
+            text = text.replace("```json", "").replace("```", "").strip()
+            
+            questions = json.loads(text)
+            
+            if isinstance(questions, list) and len(questions) > 0:
+                for idx, q in enumerate(questions):
+                    if "id" not in q: q["id"] = str(idx+1)
+                    if "difficulty" not in q: q["difficulty"] = "medium"
+                return questions[:num_questions]
+            
+            return self._mock_quiz(topic, num_questions)
+            
+        except Exception as e:
+            print(f"⚠️ Assessment oluşturma hatası: {e}")
+            return self._mock_quiz(topic, num_questions)
     
+    def generate_curriculum(
+        self, 
+        goal: str, 
+        level: str = "beginner", 
+        duration_weeks: int = 4
+    ) -> Dict:
+        """Kullanıcı için tam kapsamlı müfredat oluşturur."""
+        if not self.model:
+            print("⚠️ AI modeli yok, mock veri dönülüyor")
+            return {} # RoadmapAgent fallback kullanacak
+            
+        prompt = f"""
+        "{goal}" hedefi için {level} seviyesinde {duration_weeks} haftalık detaylı bir öğrenme müfredatı oluştur.
+        
+        GEREKSINIMLER:
+        1. Toplam {duration_weeks * 7} günlük plan oluştur (Hafta sonları dahil).
+        2. Her gün için belirli bir tema ve görevler olsun.
+        3. Görev tipleri: "theory" (okuma/izleme), "practice" (uygulama), "quiz" (test).
+        4. "day" alanı 1'den başlayıp {duration_weeks * 7}'ye kadar gitmeli.
+        5. Her gün için 3-4 görev olsun.
+        6. Türkçe çıktı ver.
+        
+        Aşağıdaki JSON formatında çıktı ver:
+        {{
+            "goal": "{goal}",
+            "level": "{level}",
+            "duration_weeks": {duration_weeks},
+            "summary": "Müfredat özeti...",
+            "daily_lessons": [
+                {{
+                    "day": 1,
+                    "theme": "Günün konusu",
+                    "objectives": ["Hedef 1", "Hedef 2"],
+                    "tip": "Günün ipucu",
+                    "tasks": [
+                        {{
+                            "task": "Görev başlığı",
+                            "type": "theory/practice/quiz",
+                            "duration_min": 20,
+                            "description": "Detaylı açıklama"
+                        }}
+                    ]
+                }}
+            ]
+        }}
+        
+        SADECE JSON döndür. Markdown bloğu kullanma.
+        """
+        
+        try:
+            response = self.model.generate_content(prompt)
+            text = response.text.strip()
+            
+            # JSON temizleme
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0]
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0]
+            
+            text = text.strip()
+            return json.loads(text)
+            
+        except Exception as e:
+            print(f"⚠️ Müfredat oluşturma hatası: {e}")
+            return {} # RoadmapAgent fallback kullanacak
     def analyze_performance(self, performance_history: List[Dict]) -> Dict:
         if not self.model or not performance_history:
             return self._mock_analysis(performance_history)

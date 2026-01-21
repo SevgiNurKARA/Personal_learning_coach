@@ -2,7 +2,16 @@ import argparse
 import sys
 import os
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+# Windows encoding fix
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding='utf-8')
+
 import json
+from dotenv import load_dotenv
+
+# Load env vars
+load_dotenv()
+
 from agents.orchestrator_agent import OrchestratorAgent
 from tools.google_search import GoogleSearchTool
 from memory.memory_bank import MemoryBank
@@ -15,7 +24,7 @@ def run_demo():
     orchestrator = OrchestratorAgent(search_tool=search_tool, memory_service=memory)
 
     # Load demo input
-    with open("examples/demo_input.json", "r", encoding="utf-8") as f:
+    with open("data/examples/demo_input.json", "r", encoding="utf-8") as f:
         demo = json.load(f)
 
     print("=" * 50)

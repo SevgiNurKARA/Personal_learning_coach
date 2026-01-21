@@ -2,11 +2,14 @@ from typing import Dict, List, Optional
 from tools.quiz_scoring import QuizScorer, QuizQuestion, QuizResult
 
 
-class EvaluationAgent:
+class ProgressAgent:
     
     def __init__(self, memory_service=None):
         self.memory = memory_service
         self.quiz_scorer = QuizScorer()
+
+# ... (methods from evaluation_agent.py) ...
+
 
     def evaluate(self, day_report: Dict) -> Dict:
         score = 0
@@ -137,3 +140,12 @@ class EvaluationAgent:
             }
         except Exception:
             return {"message": "İlerleme verisi alınamadı"}
+
+# Singleton
+_progress_agent = None
+
+def get_progress_agent() -> ProgressAgent:
+    global _progress_agent
+    if _progress_agent is None:
+        _progress_agent = ProgressAgent()
+    return _progress_agent

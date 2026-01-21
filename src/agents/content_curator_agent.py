@@ -7,12 +7,26 @@ Konuya göre gerçek, kaliteli eğitim kaynaklarını döndürür.
 from typing import List, Dict
 
 
-class ResearchAgent:
-    """Öğrenme kaynakları bulan agent."""
+try:
+    from tools.ai_service import get_ai_service
+    AI_AVAILABLE = True
+except ImportError:
+    AI_AVAILABLE = False
+
+
+class ContentCuratorAgent:
+    """Öğrenme kaynakları bulan ve içerik üreten agent."""
     
     def __init__(self, search_tool=None, memory_service=None):
         self.search_tool = search_tool
         self.memory = memory_service
+        self.ai_service = None
+        
+        if AI_AVAILABLE:
+            try:
+                self.ai_service = get_ai_service()
+            except:
+                pass
         
         # Konu bazlı gerçek kaynaklar
         self.resources_db = {
@@ -23,6 +37,8 @@ class ResearchAgent:
                     "type": "documentation",
                     "description": "Python'un resmi öğrenme rehberi"
                 },
+# ... (rest of the file content is skipped for brevity) ...
+
                 {
                     "title": "W3Schools Python Tutorial",
                     "url": "https://www.w3schools.com/python/",
@@ -234,3 +250,69 @@ class ResearchAgent:
             return self.resources_db["ingilizce"][:5]
         else:
             return self.resources_db["genel"][:5]
+
+    def _is_ai_available(self) -> bool:
+        """AI servisinin kullanılabilir olup olmadığını kontrol eder."""
+        return self.ai_service is not None and self.ai_service._is_configured()
+
+    def generate_lesson_content(self, topic: str, level: str = "beginner", goal: str = "") -> str:
+        """
+        Ders içeriği üretir - AI veya Fallback.
+        """
+        # AI ile içerik üret
+        if self._is_ai_available():
+            try:
+                content = self.ai_service.explain_topic(topic, level, goal)
+                if content and len(content) > 50:
+                    return content
+                else:
+                    print(f"⚠️ AI boş içerik döndürdü: {topic}")
+            except Exception as e:
+                print(f"❌ AI içerik hatası: {e}")
+        else:
+            print(f"⚠️ AI servisi kullanılamıyor")
+        
+        # AI çalışmazsa minimal fallback
+        return self._get_minimal_fallback_content(topic, level, goal)
+
+    def _get_minimal_fallback_content(self, topic: str, level: str, goal: str) -> str:
+        """
+        Minimal fallback içerik - sadece AI çalışmazsa.
+        """
+        return f"""
+# ⚠️ AI Servisi Çalışmıyor
+
+## {topic}
+
+Bu ders içeriği AI tarafından oluşturulmalıdır, ancak şu anda AI servisi kullanılamıyor.
+
+### Lütfen şunları kontrol edin:
+
+1. **GEMINI_API_KEY** `.env` dosyasında tanımlı mı?
+2. API key geçerli mi?
+3. İnternet bağlantınız var mı?
+
+### Geçici Çözüm:
+
+Bu konuyu öğrenmek için:
+- Google'da "{topic}" aratın
+- YouTube'da "{topic} tutorial" izleyin
+- Resmi dokümantasyonları inceleyin
+
+**Hedef:** {goal if goal else 'Belirtilmemiş'}  
+**Seviye:** {level}
+
+---
+
+💡 **Not:** AI servisi aktif olduğunda bu sayfa otomatik olarak {topic} hakkında detaylı, kişiselleştirilmiş içerik gösterecektir.
+"""
+
+
+# Singleton
+_content_curator_agent = None
+
+def get_content_curator_agent() -> ContentCuratorAgent:
+    global _content_curator_agent
+    if _content_curator_agent is None:
+        _content_curator_agent = ContentCuratorAgent()
+    return _content_curator_agent

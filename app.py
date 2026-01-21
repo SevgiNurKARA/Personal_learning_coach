@@ -19,10 +19,11 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Agent'ları import et
-from agents.curriculum_agent import CurriculumAgent, get_curriculum_agent
-from agents.content_agent import ContentAgent, get_content_agent
-from agents.level_assessment_agent import LevelAssessmentAgent, get_level_assessment_agent
+# Agent'ları import et - YENİ MİMARİ
+from agents.roadmap_agent import get_roadmap_agent
+from agents.content_curator_agent import get_content_curator_agent
+from agents.assessment_agent import get_assessment_agent
+from agents.quiz_validation_agent import get_quiz_validation_agent
 from models.user import UserManager, User
 
 # Sayfa yapılandırması
@@ -122,6 +123,7 @@ def init_session():
         "page": "login",
         "curriculum": None,
         "current_day": 1,
+        "view_day": 1,
         "daily_content": None,
         "quiz_questions": None,
         "quiz_answers": {},
@@ -180,6 +182,7 @@ def render_login_page():
                             st.session_state.goal_input = saved_data.get("goal_input")
                             st.session_state.user_level = saved_data.get("user_level")
                             st.session_state.current_day = saved_data.get("current_day", 1)
+                            st.session_state.view_day = st.session_state.current_day
                             st.session_state.completed_days = saved_data.get("completed_days", [])
                             st.session_state.day_quiz_completed = saved_data.get("day_quiz_completed", {})
                             st.session_state.curriculum_id = saved_data.get("id")
@@ -301,7 +304,8 @@ def render_level_test():
     # Soruları yükle
     if st.session_state.assessment_questions is None:
         with st.spinner("📝 Seviye testi hazırlanıyor..."):
-            level_agent = get_level_assessment_agent()
+            # YENİ AGENT ÇAĞRISI
+            level_agent = get_assessment_agent()
             questions = level_agent.get_assessment_questions(goal, 10)
             st.session_state.assessment_questions = questions
     
@@ -365,7 +369,8 @@ def render_level_test():
     
     else:
         # Sonuçları hesapla
-        level_agent = get_level_assessment_agent()
+        # YENİ AGENT ÇAĞRISI
+        level_agent = get_assessment_agent()
         result = level_agent.calculate_level(st.session_state.assessment_answers, questions)
         st.session_state.user_level = result
         
@@ -449,9 +454,9 @@ def render_create_curriculum():
     st.markdown('<h1 class="main-header">🎓 Müfredat Oluşturuluyor</h1>', unsafe_allow_html=True)
     
     with st.spinner("🤖 AI müfredatınızı hazırlıyor... Bu birkaç saniye sürebilir."):
-        # Curriculum Agent ile müfredat oluştur
-        curriculum_agent = get_curriculum_agent()
-        curriculum = curriculum_agent.generate_curriculum(
+        # YENİ AGENT ÇAĞRISI: RoadmapAgent
+        roadmap_agent = get_roadmap_agent()
+        curriculum = roadmap_agent.generate_curriculum(
             goal_data["goal"],
             level_data["level"],
             goal_data["duration"]
@@ -624,7 +629,7 @@ def render_dashboard():
                 
                 if is_accessible:
                     if st.button(btn_text, key=f"topic_{day}", use_container_width=True, type=btn_type if status == "current" else "secondary"):
-                        st.session_state.current_day = day
+                        st.session_state.view_day = day
                         st.session_state.daily_content = None
                         st.session_state.quiz_questions = None
                         st.rerun()
@@ -637,23 +642,24 @@ def render_dashboard():
 
 
 def render_current_day_content():
-    """Mevcut günün içeriği."""
+    """Mevcut (Görüntülenen) günün içeriği."""
     curriculum = st.session_state.curriculum
-    current_day = st.session_state.current_day
+    # View Mode Düzeltmesi: Görüntülenen günü kullan
+    view_day = st.session_state.get("view_day", st.session_state.current_day)
     
     daily_lessons = curriculum.get("daily_lessons", [])
     
-    if current_day > len(daily_lessons):
+    if view_day > len(daily_lessons):
         st.success("🎉 Tebrikler! Tüm müfredatı tamamladınız!")
         return
     
-    lesson = daily_lessons[current_day - 1]
+    lesson = daily_lessons[view_day - 1]
     
-    st.markdown(f"## 📅 Gün {current_day}: {lesson.get('theme', 'Günün Konusu')}")
+    st.markdown(f"## 📅 Gün {view_day}: {lesson.get('theme', 'Günün Konusu')}")
     
     # Gün durumu kontrolü
-    is_day_completed = current_day in st.session_state.completed_days
-    quiz_score = st.session_state.day_quiz_completed.get(current_day, None)
+    is_day_completed = view_day in st.session_state.completed_days
+    quiz_score = st.session_state.day_quiz_completed.get(view_day, None)
     
     # Durum göstergesi
     if is_day_completed:
@@ -746,6 +752,7 @@ def complete_day():
     total_days = len(st.session_state.curriculum.get("daily_lessons", []))
     if current_day < total_days:
         st.session_state.current_day = current_day + 1
+        st.session_state.view_day = st.session_state.current_day
     
     # İlerlemeyi kaydet
     um.update_progress(
@@ -765,7 +772,7 @@ def complete_day():
 def render_lesson_page():
     """Ders içeriği sayfası."""
     curriculum = st.session_state.curriculum
-    current_day = st.session_state.current_day
+    current_day = st.session_state.get("view_day", st.session_state.current_day)
     
     daily_lessons = curriculum.get("daily_lessons", [])
     
@@ -789,10 +796,11 @@ def render_lesson_page():
             elif lesson.get("content"):
                 content = lesson["content"]
             else:
-                content_agent = get_content_agent()
+                # YENİ AGENT ÇAĞRISI: ContentCuratorAgent (İçerik Üretimi için)
+                content_curator = get_content_curator_agent()
                 goal = curriculum.get("goal", "")
                 level = curriculum.get("level", "beginner")
-                content = content_agent.generate_lesson_content(theme, level, goal)
+                content = content_curator.generate_lesson_content(theme, level, goal)
             
             st.session_state.daily_content = content
     
@@ -802,7 +810,7 @@ def render_lesson_page():
     st.markdown("---")
     
     # Quiz durumu kontrolü
-    current_day = st.session_state.current_day
+    current_day = st.session_state.get("view_day", st.session_state.current_day)
     quiz_score = st.session_state.day_quiz_completed.get(current_day, None)
     
     if quiz_score is not None:
@@ -834,7 +842,7 @@ def render_lesson_page():
 def render_quiz_page():
     """Quiz sayfası - AI'dan sorular gelir."""
     curriculum = st.session_state.curriculum
-    current_day = st.session_state.current_day
+    current_day = st.session_state.get("view_day", st.session_state.current_day)
     
     daily_lessons = curriculum.get("daily_lessons", [])
     
@@ -856,11 +864,11 @@ def render_quiz_page():
     if st.session_state.quiz_questions is None:
         questions = None
         
-        # ContentAgent'tan AI tabanlı sorular al
+        # YENİ AGENT ÇAĞRISI: QuizValidationAgent
         try:
-            content_agent = get_content_agent()
+            quiz_agent = get_quiz_validation_agent()
             with st.spinner("🤖 AI quiz soruları oluşturuyor..."):
-                questions = content_agent.generate_quiz(theme, level, 5, goal)
+                questions = quiz_agent.generate_quiz(theme, level, 5, goal)
             
             if questions and len(questions) > 0:
                 # Fallback kontrolü
@@ -1177,6 +1185,7 @@ def render_sidebar():
                 st.session_state.assessment_submitted = False
                 st.session_state.completed_days = []
                 st.session_state.current_day = 1
+                st.session_state.view_day = 1
                 st.session_state.day_quiz_completed = {}
                 st.session_state.page = "set_goal"
                 st.rerun()

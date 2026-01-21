@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 
 
 class MemoryBank:
-    def __init__(self, path: str = "memory/user_profile_store.json"):
+    def __init__(self, path: str = "data/memory/user_profile_store.json"):
         """Initialize the Memory Bank with a path to the user profile store."""
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)

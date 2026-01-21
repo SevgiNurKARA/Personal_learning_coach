@@ -10,6 +10,10 @@ import json
 import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
+# Windows encoding fix
+if sys.platform == "win32":
+    sys.stdout.reconfigure(encoding='utf-8')
+
 from dotenv import load_dotenv
 
 # .env dosyasını yükle
@@ -218,7 +222,7 @@ def run_interactive_demo():
     print("=" * 60)
     print("\n💡 İpucu: Gerçek AI yanıtları için .env dosyasına")
     print("   GEMINI_API_KEY ekleyin.")
-    print("\n   Detaylar için: SETUP_GUIDE.md dosyasını okuyun.")
+    print("\n   Detaylar için: docs/SETUP_GUIDE.md dosyasını okuyun.")
 
 
 def test_ai_directly():

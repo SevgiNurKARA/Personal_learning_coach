@@ -1,0 +1,252 @@
+{
+  "user_profile": {
+    "goal": "3 ayda Python temeli",
+    "level": "başlangıç",
+    "daily_time": 1.0,
+    "style": "teori + uygulama",
+    "created_at": "2026-01-19T11:57:12.846180",
+    "domain": "python"
+  },
+  "recommendations": [
+    {
+      "key": "3 ayda Python temeli",
+      "recs": [
+        {
+          "title": "Python Resmi Dokümantasyonu",
+          "url": "https://docs.python.org/3/tutorial/",
+          "type": "documentation",
+          "description": "Python'un resmi öğrenme rehberi"
+        },
+        {
+          "title": "W3Schools Python Tutorial",
+          "url": "https://www.w3schools.com/python/",
+          "type": "tutorial",
+          "description": "İnteraktif Python dersleri"
+        },
+        {
+          "title": "Real Python",
+          "url": "https://realpython.com/",
+          "type": "tutorial",
+          "description": "Detaylı Python makaleleri ve projeler"
+        },
+        {
+          "title": "Python Egzersizleri - HackerRank",
+          "url": "https://www.hackerrank.com/domains/python",
+          "type": "practice",
+          "description": "Python pratik problemleri"
+        },
+        {
+          "title": "Codecademy Python",
+          "url": "https://www.codecademy.com/learn/learn-python-3",
+          "type": "course",
+          "description": "İnteraktif Python kursu"
+        },
+        {
+          "title": "Python Türkçe Kaynak - BTK Akademi",
+          "url": "https://www.btkakademi.gov.tr/portal/course/python-ile-programlama-10701",
+          "type": "course",
+          "description": "Ücretsiz Türkçe Python kursu"
+        },
+        {
+          "title": "YouTube - Python Dersleri (Türkçe)",
+          "url": "https://www.youtube.com/results?search_query=python+dersleri+türkçe",
+          "type": "video",
+          "description": "Türkçe Python video dersleri"
+        }
+      ]
+    },
+    {
+      "key": "3 ayda Python temeli",
+      "recs": [
+        {
+          "title": "Python Resmi Dokümantasyonu",
+          "url": "https://docs.python.org/3/tutorial/",
+          "type": "documentation",
+          "description": "Python'un resmi öğrenme rehberi"
+        },
+        {
+          "title": "W3Schools Python Tutorial",
+          "url": "https://www.w3schools.com/python/",
+          "type": "tutorial",
+          "description": "İnteraktif Python dersleri"
+        },
+        {
+          "title": "Real Python",
+          "url": "https://realpython.com/",
+          "type": "tutorial",
+          "description": "Detaylı Python makaleleri ve projeler"
+        },
+        {
+          "title": "Python Egzersizleri - HackerRank",
+          "url": "https://www.hackerrank.com/domains/python",
+          "type": "practice",
+          "description": "Python pratik problemleri"
+        },
+        {
+          "title": "Codecademy Python",
+          "url": "https://www.codecademy.com/learn/learn-python-3",
+          "type": "course",
+          "description": "İnteraktif Python kursu"
+        },
+        {
+          "title": "Python Türkçe Kaynak - BTK Akademi",
+          "url": "https://www.btkakademi.gov.tr/portal/course/python-ile-programlama-10701",
+          "type": "course",
+          "description": "Ücretsiz Türkçe Python kursu"
+        },
+        {
+          "title": "YouTube - Python Dersleri (Türkçe)",
+          "url": "https://www.youtube.com/results?search_query=python+dersleri+türkçe",
+          "type": "video",
+          "description": "Türkçe Python video dersleri"
+        }
+      ]
+    }
+  ],
+  "daily_plans": [
+    {
+      "type": "learning_plan",
+      "day": 1,
+      "theme": "Python'a Giriş ve Kurulum",
+      "total_duration_min": 60,
+      "tasks": [
+        {
+          "task_id": 1,
+          "task": "Python Kurulumu",
+          "type": "theory",
+          "duration_min": 20,
+          "description": "python.org'dan Python 3.x indirin ve kurun. Kurulum sırasında 'Add to PATH' seçeneğini işaretleyin.",
+          "priority": "high",
+          "completed": false
+        },
+        {
+          "task_id": 2,
+          "task": "İlk Program: Merhaba Dünya",
+          "type": "practice",
+          "duration_min": 26,
+          "description": "Bir metin editörü açın, 'merhaba.py' dosyası oluşturun ve print('Merhaba Dünya!') yazıp çalıştırın.",
+          "priority": "high",
+          "completed": false
+        },
+        {
+          "task_id": 3,
+          "task": "Quiz: Python Temelleri",
+          "type": "quiz",
+          "duration_min": 13,
+          "description": "Python'un ne olduğu ve temel kullanımı hakkında quiz çözün.",
+          "priority": "medium",
+          "completed": false
+        }
+      ],
+      "resources": [
+        {
+          "title": "Python Resmi Dokümantasyonu",
+          "url": "https://docs.python.org/3/tutorial/",
+          "type": "documentation",
+          "description": "Python'un resmi öğrenme rehberi"
+        },
+        {
+          "title": "W3Schools Python Tutorial",
+          "url": "https://www.w3schools.com/python/",
+          "type": "tutorial",
+          "description": "İnteraktif Python dersleri"
+        },
+        {
+          "title": "Real Python",
+          "url": "https://realpython.com/",
+          "type": "tutorial",
+          "description": "Detaylı Python makaleleri ve projeler"
+        }
+      ],
+      "learning_objectives": [
+        "Python'u bilgisayarınıza kurmak",
+        "İlk Python programınızı yazmak ve çalıştırmak",
+        "print() fonksiyonunu kullanmak"
+      ],
+      "tips": "💡 Python'u kurduktan sonra terminal/cmd'de 'python --version' yazarak kontrol edin.",
+      "domain": "python",
+      "level": "başlangıç",
+      "practice_exercise": "Ekrana kendi adınızı ve yaşınızı yazdıran bir program yazın."
+    },
+    {
+      "type": "learning_plan",
+      "day": 2,
+      "theme": "Değişkenler ve Veri Tipleri",
+      "total_duration_min": 60,
+      "tasks": [
+        {
+          "task_id": 1,
+          "task": "Değişken Tanımlama",
+          "type": "theory",
+          "duration_min": 21,
+          "description": "W3Schools'dan 'Python Variables' konusunu okuyun. String, int, float, bool tiplerini öğrenin.",
+          "priority": "high",
+          "completed": false
+        },
+        {
+          "task_id": 2,
+          "task": "Kişisel Bilgi Programı",
+          "type": "practice",
+          "duration_min": 27,
+          "description": "isim, yas, boy, ogrenci_mi değişkenlerini tanımlayın ve f-string ile ekrana yazdırın.",
+          "priority": "high",
+          "completed": false
+        },
+        {
+          "task_id": 3,
+          "task": "Quiz: Veri Tipleri",
+          "type": "quiz",
+          "duration_min": 10,
+          "description": "Değişkenler ve veri tipleri hakkında quiz çözün.",
+          "priority": "medium",
+          "completed": false
+        }
+      ],
+      "resources": [
+        {
+          "title": "Python Resmi Dokümantasyonu",
+          "url": "https://docs.python.org/3/tutorial/",
+          "type": "documentation",
+          "description": "Python'un resmi öğrenme rehberi"
+        },
+        {
+          "title": "W3Schools Python Tutorial",
+          "url": "https://www.w3schools.com/python/",
+          "type": "tutorial",
+          "description": "İnteraktif Python dersleri"
+        },
+        {
+          "title": "Real Python",
+          "url": "https://realpython.com/",
+          "type": "tutorial",
+          "description": "Detaylı Python makaleleri ve projeler"
+        }
+      ],
+      "learning_objectives": [
+        "Değişken tanımlama kurallarını öğrenmek",
+        "str, int, float, bool tiplerini anlamak",
+        "f-string ile formatlı yazdırma yapmak"
+      ],
+      "tips": "💡 type() fonksiyonu ile değişkenin tipini kontrol edebilirsiniz: type(degisken)",
+      "domain": "python",
+      "level": "başlangıç",
+      "practice_exercise": "Bir ürünün adı, fiyatı ve stok durumunu tutan değişkenler oluşturun."
+    }
+  ],
+  "performance": [
+    {
+      "daily_score": 38,
+      "performance_level": "good",
+      "suggestions": [
+        "✅ Görevleri tamamlamada başarılısınız!",
+        "🌟 Quiz performansınız harika!"
+      ],
+      "raw": {
+        "day": 1,
+        "completed_tasks": 3,
+        "perceived_difficulty": 3,
+        "quiz_score": 80
+      }
+    }
+  ]
+}
